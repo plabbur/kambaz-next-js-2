@@ -28,7 +28,7 @@ export default function TOC() {
                 </Link>
             </li>
             <li>
-                <Link href="https://github.com/plabbur/kambaz-next-js" id="wd-github">
+                <Link href="https://github.com/plabbur/kambaz-next-js-2" id="wd-github">
                     Github Repo
                 </Link>
             </li>
