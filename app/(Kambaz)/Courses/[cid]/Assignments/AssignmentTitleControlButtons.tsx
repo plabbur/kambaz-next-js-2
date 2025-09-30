@@ -1,5 +1,4 @@
 import { BsPlus } from "react-icons/bs";
-import GreenCheckmark from "../Modules/GreenCheckmark";
 import { IoEllipsisVertical } from "react-icons/io5";
 
 export default function AssignmentTitleControlButtons() {

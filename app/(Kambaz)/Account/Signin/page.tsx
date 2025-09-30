@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Form, Button } from "react-bootstrap";
 
 export default function Signin() {
@@ -17,12 +16,12 @@ export default function Signin() {
                     type="password"
                     className="mb-2"
                 />
-                <Link href="/Dashboard" id="wd-signin-btn" className="btn btn-primary w-100 mb-2">
+                <Button href="/Dashboard" id="wd-signin-btn" className="btn btn-primary w-100 mb-2">
                     Sign in
-                </Link>
-                <Link href="Signup" id="wd-signup-link" className="d-block text-center text-decoration-none">
+                </Button>
+                <Button href="Signup" id="wd-signup-link" className="d-block text-center text-decoration-none">
                     Sign up
-                </Link>
+                </Button>
             </Form>
         </div>
     );

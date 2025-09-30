@@ -1,11 +1,10 @@
 import { MdDoNotDisturbAlt } from "react-icons/md";
-import { FaBell, FaCheckCircle, FaHome, FaChartLine } from "react-icons/fa";
+import { FaBell, FaCheckCircle, FaHome } from "react-icons/fa";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { MdOutlineBarChart } from "react-icons/md";
 import { BiImport } from "react-icons/bi";
 import { LiaFileImportSolid } from "react-icons/lia";
 import { Button } from "react-bootstrap";
-import { FaChartBar } from "react-icons/fa6";
 {/* Find more icons */ }
 export default function CourseStatus() {
     return (

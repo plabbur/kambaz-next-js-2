@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Form, Button } from "react-bootstrap";
 
 export default function Profile() {
@@ -49,9 +48,9 @@ export default function Profile() {
                     <option value="FACULTY">Faculty</option>
                     <option value="STUDENT">Student</option>
                 </Form.Select>
-                <Link href="Signin" className="btn btn-danger w-100">
+                <Button href="Signin" className="btn btn-danger w-100">
                     Sign out
-                </Link>
+                </Button>
             </Form>
         </div>
     );

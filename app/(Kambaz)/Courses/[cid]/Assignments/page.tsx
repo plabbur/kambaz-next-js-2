@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { Button, Form, ListGroup, ListGroupItem } from "react-bootstrap";
 import { BsGripVertical, BsSearch, BsPlus } from "react-icons/bs";
-import { IoEllipsisVertical } from "react-icons/io5";
-import ModuleControlButtons from "../Modules/ModuleControlButtons";
 import LessonControlButtons from "../Modules/LessonControlButtons";
 import { MdOutlineAssignment } from "react-icons/md";
 import AssignmentTitleControlButtons from "./AssignmentTitleControlButtons";
