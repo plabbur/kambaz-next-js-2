@@ -7,7 +7,7 @@ import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "./LessonControlButtons";
 import ModuleControlButtons from "./ModuleControlButtons";
 
-const ModuleGroup = ({ module }: { module: any }) => {
+const ModuleGroup = ({ module }: { module: ModuleType }) => {
   return (
     <ListGroupItem className="wd-module p-0 mb-5 fs-5 border-gray">
       <div className="wd-title p-3 ps-2 bg-secondary">
@@ -17,7 +17,7 @@ const ModuleGroup = ({ module }: { module: any }) => {
       </div>
       {module.lessons && (
         <ListGroup className="wd-lessons rounded-0">
-          {module.lessons.map((lesson: any) => (
+          {module.lessons.map((lesson: LessonType) => (
             <ModuleLessonItem key={lesson._id} lesson={lesson} />
           ))}
         </ListGroup>
@@ -26,7 +26,7 @@ const ModuleGroup = ({ module }: { module: any }) => {
   );
 };
 
-const ModuleLessonItem = ({ lesson }: { lesson: any }) => {
+const ModuleLessonItem = ({ lesson }: { lesson: LessonType }) => {
   return (
     <ListGroupItem className="wd-lesson p-3 ps-1">
       <BsGripVertical className="me-2 fs-3" />
@@ -38,7 +38,7 @@ const ModuleLessonItem = ({ lesson }: { lesson: any }) => {
 
 export default function Modules() {
   const { cid } = useParams();
-  const modules = db.modules;
+  const modules = db.modules as ModuleType[];
   return (
     <div>
       <ModulesControls />
@@ -48,8 +48,8 @@ export default function Modules() {
       <br />
       <ListGroup className="rounded-0" id="wd-modules">
         {modules
-          .filter((module: any) => module.course === cid)
-          .map((module: any) => (
+          .filter((module: ModuleType) => module.course === cid)
+          .map((module: ModuleType) => (
             <ModuleGroup key={module._id} module={module} />
           ))}
       </ListGroup>

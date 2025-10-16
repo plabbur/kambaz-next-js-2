@@ -7,8 +7,15 @@ import { MdOutlineAssignment } from "react-icons/md";
 import AssignmentTitleControlButtons from "./AssignmentTitleControlButtons";
 import * as db from "../../../Database";
 import { useParams } from "next/navigation";
+import { ParamValue } from "next/dist/server/request/params";
 
-const AssignmentItem = ({ assignment, cid }: { assignment: any, cid: any }) => {
+const AssignmentItem = ({
+  assignment,
+  cid,
+}: {
+  assignment: AssignmentType;
+  cid: ParamValue;
+}) => {
   return (
     <ListGroupItem className="wd-lesson p-3 ps-1">
       <div className="d-flex align-items-center">

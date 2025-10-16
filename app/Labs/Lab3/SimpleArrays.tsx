@@ -1,5 +1,5 @@
 export default function SimpleArrays() {
-  var functionScoped = 2;
+  const functionScoped = 2;
   const blockScoped = 5;
   const constant1 = functionScoped - blockScoped;
   const numberArray1 = [1, 2, 3, 4, 5];
