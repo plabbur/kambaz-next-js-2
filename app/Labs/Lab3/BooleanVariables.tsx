@@ -7,7 +7,7 @@ export default function BooleanVariables() {
   const true2 = true1 || false1;
   const true3 = !false2;
   const true4 = numberVariable === 123; // always use === not ==
-  const true5 = floatingPointNumber !== 321.432;
+  const true5 = floatingPointNumber !== (321.432 as number);
   const false3 = numberVariable < 100;
   return (
     <div id="wd-boolean-variables">
