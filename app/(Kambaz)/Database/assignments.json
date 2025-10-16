@@ -1,0 +1,11 @@
+[
+  { "_id": "A101", "title": "Propulsion Assignment", "course": "RS101", "description": "Calculate and analyze rocket engine performance parameters including thrust, specific impulse, and mass flow rate.", "points": 100, "dueDate": "2023-03-15", "availableDate": "2023-02-15"},
+  { "_id": "A102", "title": "Combustion Analysis", "course": "RS101", "description": "Analyze different fuel-oxidizer combinations and their combustion efficiency in rocket engines.", "points": 75, "dueDate": "2023-04-01", "availableDate": "2023-03-15"},
+  { "_id": "A103", "title": "Nozzle Design Project", "course": "RS101", "description": "Design an optimal rocket nozzle considering factors like expansion ratio and pressure distribution.", "points": 85, "dueDate": "2023-04-20", "availableDate": "2023-03-30"},
+  { "_id": "A201", "title": "Aerodynamics Quiz", "course": "RS102", "description": "Test your knowledge of fundamental aerodynamic principles and their application to rocket design.", "points": 50, "dueDate": "2023-03-10", "availableDate": "2023-03-03"},
+  { "_id": "A202", "title": "Flow Analysis", "course": "RS102", "description": "Conduct computational fluid dynamics analysis of airflow around various rocket configurations.", "points": 90, "dueDate": "2023-04-05", "availableDate": "2023-03-20"},
+  { "_id": "A203", "title": "Heating Analysis", "course": "RS102", "description": "Analyze thermal loads and heat distribution during atmospheric reentry.", "points": 80, "dueDate": "2023-04-25", "availableDate": "2023-04-10"},
+  { "_id": "A301", "title": "Structural Design Task", "course": "RS103", "description": "Design and analyze structural components for a spacecraft considering launch and space environments.", "points": 95, "dueDate": "2023-03-20", "availableDate": "2023-02-25"},
+  { "_id": "A302", "title": "Orbital Calculations", "course": "RS103", "description": "Calculate orbital parameters, transfer windows, and delta-v requirements for various missions.", "points": 70, "dueDate": "2023-04-10", "availableDate": "2023-03-25"},
+  { "_id": "A303", "title": "Systems Engineering Exam", "course": "RS103", "description": "Comprehensive exam covering spacecraft systems integration, requirements analysis, and mission planning.", "points": 100, "dueDate": "2023-05-01", "availableDate": "2023-04-15"}
+]

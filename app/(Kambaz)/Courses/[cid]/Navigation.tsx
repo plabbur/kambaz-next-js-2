@@ -3,29 +3,42 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function CourseNavigation() {
-    const pathname = usePathname();
+  const pathname = usePathname();
+  // Extract the course ID from the pathname
+  const courseId = pathname.split("/Courses/")[1]?.split("/")[0];
+  const links = [
+    { label: "Home", path: "/Home" },
+    { label: "Modules", path: "/Modules" },
+    { label: "Piazza", path: "/Piazza" },
+    { label: "Zoom", path: "/Zoom" },
+    { label: "Assignments", path: "/Assignments" },
+    { label: "Quizzes", path: "/Quizzes" },
+    { label: "Grades", path: "/Grades" },
+    { label: "People", path: "/People/Table" },
+  ];
 
-    const getLinkClasses = (path: string) => {
-        const isActive = pathname === path || pathname.startsWith(path + '/');
-        return `list-group-item border-0 ${isActive ? 'active' : 'text-danger'}`;
-    };
+  const getLinkClasses = (path: string) => {
+    const isActive = pathname === path || pathname.startsWith(path + "/");
+    return `list-group-item border-0 ${isActive ? "active" : "text-danger"}`;
+  };
 
-    return (
-        <div id="wd-courses-navigation" className="wd list-group fs-5 rounded-0">
-            <Link href="/Courses/1234/Home" id="wd-course-home-link"
-                className={getLinkClasses('/Courses/1234/Home')}> Home </Link><br />
-            <Link href="/Courses/1234/Modules" id="wd-course-modules-link"
-                className={getLinkClasses('/Courses/1234/Modules')}> Modules </Link><br />
-            <Link href="/Courses/1234/Piazza" id="wd-course-piazza-link"
-                className={getLinkClasses('/Courses/1234/Piazza')}> Piazza </Link><br />
-            <Link href="/Courses/1234/Zoom" id="wd-course-zoom-link"
-                className={getLinkClasses('/Courses/1234/Zoom')}> Zoom </Link><br />
-            <Link href="/Courses/1234/Assignments" id="wd-course-assignments-link"
-                className={getLinkClasses('/Courses/1234/Assignments')}> Assignments </Link><br />
-            <Link href="/Courses/1234/Quizzes" id="wd-course-quizzes-link"
-                className={getLinkClasses('/Courses/1234/Quizzes')}> Quizzes </Link><br />
-            <Link href="/Courses/1234/People/Table" id="wd-course-people-link"
-                className={getLinkClasses('/Courses/1234/People')}> People </Link><br />
-        </div>
-    );
+  return (
+    <div id="wd-courses-navigation" className="wd list-group fs-5 rounded-0">
+      {links.map((link) => {
+        return (
+          <>
+            <Link
+              key={link.label}
+              href={`/Courses/${courseId}${link.path}`}
+              id="wd-course-home-link"
+              className={getLinkClasses(`/Courses/${courseId}${link.path}`)}
+            >
+              {link.label}
+            </Link>
+            <br />
+          </>
+        );
+      })}
+    </div>
+  );
 }
