@@ -1,12 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, CardBody, CardImg, CardText, CardTitle, Col, FormControl, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardImg,
+  CardText,
+  CardTitle,
+  Col,
+  FormControl,
+  Row,
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { enroll, unenroll } from "../Account/enrollmentsReducer";
 import { addNewCourse, deleteCourse, updateCourse } from "../Courses/reducer";
 import { randomColor } from "../utils";
 import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 const CourseCard = ({
   course,
@@ -27,9 +38,7 @@ const CourseCard = ({
   return (
     <Col className="wd-dashboard-course" style={{ width: "300px" }}>
       <Card>
-        <div
-          className="wd-dashboard-course-link text-decoration-none text-dark"
-        >
+        <div className="wd-dashboard-course-link text-decoration-none text-dark">
           <div
             className=""
             style={{
@@ -60,7 +69,10 @@ const CourseCard = ({
             </CardText>
             {isEnrolled ? (
               <>
-                <Button variant="primary" onClick={() => router.push(`/Courses/${course._id}/Home`)}>
+                <Button
+                  variant="primary"
+                  onClick={() => router.push(`/Courses/${course._id}/Home`)}
+                >
                   Go
                 </Button>
                 <Button
@@ -125,10 +137,12 @@ export default function Dashboard() {
   });
 
   const isEnrolled = (courseId: string) => {
+    if (!currentUser) {
+      return false;
+    }
     return enrollments.some(
       (enrollment: any) =>
-        enrollment.user === currentUser._id && 
-        enrollment.course === courseId
+        enrollment.user === currentUser._id && enrollment.course === courseId
     );
   };
 
@@ -140,37 +154,12 @@ export default function Dashboard() {
     }
   };
 
-  // const { currentUser } = useSelector((state: any) => state.accountReducer);
-  // const { enrollments } = db;
-
-  function uuidv4() {
-    throw new Error("Function not implemented.");
+  if (!currentUser) {
+    return <div>Please log in to view the dashboard.</div>;
   }
 
-  // const addNewCourse = () => {
-  //   const newColor = randomColor();
-  //   const newCourse = { ...course, _id: uuidv4(), color: newColor };
-  //   setCourses([...courses, newCourse]);
-  // };
-
-  // const deleteCourse = (courseId: string) => {
-  //   setCourses(courses.filter((course) => course._id !== courseId));
-  // };
-
-  // const updateCourse = () => {
-  //   setCourses(
-  //     courses.map((c) => {
-  //       if (c._id === course._id) {
-  //         return course;
-  //       } else {
-  //         return c;
-  //       }
-  //     })
-  //   );
-  // };
-
   return (
-    <div id="wd-dashboard" style={{width: "100%"}}>
+    <div id="wd-dashboard" style={{ width: "100%" }}>
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
       <h5>
         New Course
@@ -204,12 +193,11 @@ export default function Dashboard() {
         onChange={(e) => setCourse({ ...course, description: e.target.value })}
       />
       <hr />
-
       <div className="d-flex justify-content-between align-items-center">
         <h2 id="wd-dashboard-published">
           {showAllCourses ? "All Courses" : "My Courses"} ({courses.length})
         </h2>
-        <Button 
+        <Button
           variant="primary"
           onClick={() => setShowAllCourses(!showAllCourses)}
         >
@@ -220,24 +208,34 @@ export default function Dashboard() {
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {courses
-            .filter((course: CourseType) => 
-              showAllCourses || isEnrolled(course._id)
+            .filter(
+              (course: CourseType) => showAllCourses || isEnrolled(course._id)
             )
             .map((course: CourseType) => (
               <CourseCard
                 key={course._id}
                 course={course}
-                deleteCourse={currentUser.role === 'FACULTY' ? (event: Event) => {
-                  event.preventDefault();
-                  dispatch(deleteCourse(course._id));
-                } : undefined}
-                editCourse={currentUser.role === 'FACULTY' ? (event: Event) => {
-                  event.preventDefault();
-                  setCourse(course);
-                } : undefined}
+                deleteCourse={
+                  currentUser.role === "FACULTY"
+                    ? (event: Event) => {
+                        event.preventDefault();
+                        dispatch(deleteCourse(course._id));
+                      }
+                    : undefined
+                }
+                editCourse={
+                  currentUser.role === "FACULTY"
+                    ? (event: Event) => {
+                        event.preventDefault();
+                        setCourse(course);
+                      }
+                    : undefined
+                }
                 isEnrolled={isEnrolled(course._id)}
-                onEnrollmentClick={() => handleEnrollment(course._id, isEnrolled(course._id))}
-                showAdminControls={currentUser.role === 'FACULTY'}
+                onEnrollmentClick={() =>
+                  handleEnrollment(course._id, isEnrolled(course._id))
+                }
+                showAdminControls={currentUser.role === "FACULTY"}
               />
             ))}
         </Row>
