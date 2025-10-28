@@ -24,9 +24,9 @@ export default function CourseNavigation() {
 
   return (
     <div id="wd-courses-navigation" className="wd list-group fs-5 rounded-0">
-      {links.map((link) => {
+      {links.map((link, index) => {
         return (
-          <>
+          <div key={index}>
             <Link
               key={link.label}
               href={`/Courses/${courseId}${link.path}`}
@@ -36,7 +36,7 @@ export default function CourseNavigation() {
               {link.label}
             </Link>
             <br />
-          </>
+          </div>
         );
       })}
     </div>

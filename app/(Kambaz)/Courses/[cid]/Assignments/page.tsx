@@ -1,20 +1,30 @@
 "use client";
 import Link from "next/link";
-import { Button, Form, ListGroup, ListGroupItem } from "react-bootstrap";
-import { BsGripVertical, BsSearch, BsPlus } from "react-icons/bs";
-import LessonControlButtons from "../Modules/LessonControlButtons";
+import { Button, Form, ListGroup, ListGroupItem, Modal } from "react-bootstrap";
+import { BsGripVertical, BsSearch, BsPlus, BsTrash } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
 import AssignmentTitleControlButtons from "./AssignmentTitleControlButtons";
-import * as db from "../../../Database";
 import { useParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { deleteAssignment } from "./reducer";
 import { ParamValue } from "next/dist/server/request/params";
+
+interface Assignment {
+  _id: string;
+  title: string;
+  description: string;
+  course: string;
+}
 
 const AssignmentItem = ({
   assignment,
   cid,
+  onDelete
 }: {
-  assignment: AssignmentType;
+  assignment: Assignment;
   cid: ParamValue;
+  onDelete: (id: string) => void;
 }) => {
   return (
     <ListGroupItem className="wd-lesson p-3 ps-1">
@@ -33,15 +43,42 @@ const AssignmentItem = ({
             </div>
           </Link>
         </div>
-        <LessonControlButtons />
+        <Button 
+          variant="link" 
+          className="text-danger p-0 border-0"
+          onClick={() => onDelete(assignment._id)}
+        >
+          <BsTrash className="fs-4" />
+        </Button>
       </div>
     </ListGroupItem>
   );
 };
 
 export default function Assignments() {
-  const assignments = db.assignments;
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
   const { cid } = useParams();
+  const dispatch = useDispatch();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [assignmentToDelete, setAssignmentToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (assignmentId: string) => {
+    setAssignmentToDelete(assignmentId);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (assignmentToDelete) {
+      dispatch(deleteAssignment(assignmentToDelete));
+    }
+    setShowDeleteModal(false);
+    setAssignmentToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setAssignmentToDelete(null);
+  };
 
   return (
     <div id="wd-assignments" className="p-4">
@@ -60,10 +97,12 @@ export default function Assignments() {
             <BsPlus className="fs-4 me-1" />
             Group
           </Button>
-          <Button variant="danger">
-            <BsPlus className="fs-4 me-1" />
-            Assignment
-          </Button>
+          <Link href={`/Courses/${cid}/Assignments/new`}>
+            <Button variant="danger">
+              <BsPlus className="fs-4 me-1" />
+              Assignment
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -76,19 +115,36 @@ export default function Assignments() {
           </div>
           <ListGroup className="wd-assignment-list rounded-0">
             {assignments
-              .filter((assignment, course) => assignment.course === cid)
-              .map((assignment) => {
-                return (
-                  <AssignmentItem
-                    key={assignment._id}
-                    assignment={assignment}
-                    cid={cid}
-                  />
-                );
-              })}
+              .filter((assignment: Assignment) => assignment.course === cid)
+              .map((assignment: Assignment) => (
+                <AssignmentItem
+                  key={assignment._id}
+                  assignment={assignment}
+                  cid={cid}
+                  onDelete={handleDeleteClick}
+                />
+              ))}
           </ListGroup>
         </ListGroupItem>
       </ListGroup>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={handleCancelDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Assignment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this assignment?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCancelDelete}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleConfirmDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

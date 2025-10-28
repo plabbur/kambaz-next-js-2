@@ -1,37 +1,103 @@
 "use client";
 
 import { Form, Row, Col, Button } from "react-bootstrap";
-import { useParams } from "next/navigation";
-import * as db from "../../../../Database";
-import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { addAssignment, updateAssignment } from "../reducer";
+
+interface Assignment {
+  _id?: string;
+  title: string;
+  description: string;
+  points: number;
+  course: string;
+  dueDate: string;
+  availableDate: string;
+  availableUntilDate: string;
+}
 
 export default function AssignmentEditor() {
-  const { aid } = useParams();
-  const assignment = db.assignments.find(
-    (assignment) => assignment._id === aid
+  const { aid, cid } = useParams();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  
+  // Get existing assignment if we're editing
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const existingAssignment = assignments.find((a: any) => a._id === aid);
+  
+  const [assignment, setAssignment] = useState(
+    existingAssignment || {
+      title: "",
+      description: "",
+      points: 100,
+      course: cid,
+      dueDate: "",
+      availableDate: "",
+      availableUntilDate: "",
+    }
   );
 
-  if (!assignment) {
-    return <div>Assignment not found</div>;
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setAssignment((prev: Assignment) => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const handleSave = () => {
+    // Ensure we have at least a title
+    if (!assignment.title.trim()) {
+      alert("Please enter an assignment name");
+      return;
+    }
+
+    // Prepare the assignment data
+    const assignmentData = {
+      ...assignment,
+      course: cid,
+      points: Number(assignment.points) || 100,
+    };
+
+    if (aid && aid !== 'new') {
+      // Update existing assignment
+      console.log("Updating assignment:", assignmentData);
+      dispatch(updateAssignment(assignmentData));
+    } else {
+      // Create new assignment
+      console.log("Creating new assignment:", assignmentData);
+      dispatch(addAssignment(assignmentData));
+    }
+
+    router.push(`/Courses/${cid}/Assignments`);
+  };
+
+  const handleCancel = () => {
+    router.push(`/Courses/${cid}/Assignments`);
+  };
 
   return (
     <div id="wd-assignments-editor" className="d-flex">
       <Form className="flex-fill">
         <div className="mb-3">
-          <Form.Label id="wd-name">Assignment Name</Form.Label>
+          <Form.Label>Assignment Name</Form.Label>
           <Form.Control
+            id="title"
             type="text"
-            placeholder="Assignment Name"
-            defaultValue={assignment.title}
+            placeholder={assignment.title ? assignment.title : "Assignment Name"}
+            value={assignment.title}
+            onChange={handleChange}
           />
         </div>
         <div className="mb-3">
+          <Form.Label>Description</Form.Label>
           <Form.Control
-            id="wd-description"
+            id="description"
             as="textarea"
             placeholder="Assignment description"
-            defaultValue={assignment.description}
+            value={assignment.description}
+            onChange={handleChange}
           />
         </div>
 
@@ -41,9 +107,11 @@ export default function AssignmentEditor() {
           </Form.Label>
           <Col sm={8}>
             <Form.Control
-              type="text"
-              placeholder="000"
-              defaultValue={assignment.points}
+              id="points"
+              type="number"
+              placeholder="100"
+              value={assignment.points}
+              onChange={handleChange}
             />
           </Col>
         </Row>
@@ -150,9 +218,10 @@ export default function AssignmentEditor() {
               <div className="mb-3">
                 <Form.Label>Due</Form.Label>
                 <Form.Control
-                  id="wd-due-date"
+                  id="dueDate"
                   type="date"
-                  defaultValue={assignment.dueDate}
+                  value={assignment.dueDate}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -161,25 +230,31 @@ export default function AssignmentEditor() {
                 <Col sm={6}>
                   <Form.Label>Available from</Form.Label>
                   <Form.Control
-                    id="wd-available-from"
+                    id="availableDate"
                     type="date"
-                    defaultValue={assignment.availableDate}
+                    value={assignment.availableDate}
+                    onChange={handleChange}
                   />
                 </Col>
                 <Col sm={6}>
                   <Form.Label>Available until</Form.Label>
-                  <Form.Control id="wd-available-until" type="date" />
+                  <Form.Control
+                    id="availableUntilDate"
+                    type="date"
+                    value={assignment.availableUntilDate}
+                    onChange={handleChange}
+                  />
                 </Col>
               </Row>
             </div>
           </Col>
         </Row>
         <Col className="d-flex justify-content-end gap-2">
-          <Button variant="secondary" href="../Assignments">
+          <Button variant="secondary" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button variant="danger" href="../Assignments">
-            Done
+          <Button variant="danger" onClick={handleSave}>
+            Save
           </Button>
         </Col>
       </Form>

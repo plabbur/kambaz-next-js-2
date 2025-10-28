@@ -15,6 +15,8 @@ interface CourseType {
   department: string;
   credits: number;
   description: string;
+  image?: string;
+  color?: string;
 }
 
 interface LessonType {
