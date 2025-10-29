@@ -11,7 +11,7 @@ import ObjectStateVariable from "./ObjectStateVariable";
 import ParentStateComponent from "./ParentStateComponent";
 import PassingDataOnEvent from "./PassingDataOnEvent";
 import PassingFunctions from "./PassingFunctions";
-import ReduxExamples from "./ReduxExamples/page";
+import ReduxExamples from "./ReduxExamples/ReduxExamples";
 import StringStateVariables from "./StringStateVariables";
 
 import { Provider } from "react-redux";
