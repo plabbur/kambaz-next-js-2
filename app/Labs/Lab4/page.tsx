@@ -1,6 +1,6 @@
 "use client";
 
-import store from "../store/page";
+import store from "../store/store";
 import ArrayStateVariable from "./ArrayStateVariable";
 import BooleanStateVariables from "./BooleanStateVariables";
 import ClickEvent from "./ClickEvent";
