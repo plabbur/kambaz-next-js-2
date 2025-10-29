@@ -1,8 +1,9 @@
 import { Button, FormControl, ListGroupItem } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addTodo, updateTodo, setTodo } from "./todosReducer";
 
 export default function TodoForm() {
+    const dispatch = useDispatch();
   const { todo } = useSelector((state: any) => state.todosReducer);
 
   return (
@@ -10,12 +11,12 @@ export default function TodoForm() {
       <FormControl
         className="flex-grow-1"
         value={todo.title}
-        onChange={(e) => setTodo({ ...todo, title: e.target.value })}
+        onChange={(e) => dispatch(setTodo({ ...todo, title: e.target.value }))}
       />
       <div className="d-flex gap-2">
         <Button
           variant="warning"
-          onClick={() => updateTodo(todo)}
+          onClick={() => dispatch(updateTodo(todo))}
           id="wd-update-todo-click"
         >
           Update
@@ -23,7 +24,7 @@ export default function TodoForm() {
         <Button
           variant="success"
           id="wd-add-todo-click"
-          onClick={() => addTodo(todo)}
+          onClick={() => dispatch(addTodo(todo))}
         >
           Add
         </Button>
