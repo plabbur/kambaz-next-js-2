@@ -77,6 +77,24 @@ export default function TOC() {
           Github Repo
         </NavLink>
       </NavItem>
+      <NavItem>
+        <NavLink
+          href="https://github.com/plabbur/kambaz-node-server-app"
+          as={Link}
+          id="wd-github-new"
+        >
+          -NEW- Server Github Repo
+        </NavLink>
+      </NavItem>
+      <NavItem>
+        <NavLink
+          href="https://kambaz-node-server-app-er95.onrender.com/"
+          as={Link}
+          id="wd-github-new"
+        >
+          Root: Render
+        </NavLink>
+      </NavItem>
     </Nav>
   );
 }
