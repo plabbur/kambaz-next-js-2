@@ -28,7 +28,6 @@ export default function WorkingWithObjectsAsynchronously() {
         }
       />
       <FormControl
-        rows={3}
         defaultValue={assignment.description}
         className="mb-2"
         onChange={(e) =>
