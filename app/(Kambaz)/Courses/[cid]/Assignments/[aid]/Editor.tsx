@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { addAssignment, updateAssignment } from "../reducer";
+import * as client from "../client";
 
 interface Assignment {
   _id?: string;
@@ -60,17 +61,21 @@ export default function AssignmentEditor() {
       points: Number(assignment.points) || 100,
     };
 
-    if (aid && aid !== 'new') {
-      // Update existing assignment
-      console.log("Updating assignment:", assignmentData);
-      dispatch(updateAssignment(assignmentData));
-    } else {
-      // Create new assignment
-      console.log("Creating new assignment:", assignmentData);
-      dispatch(addAssignment(assignmentData));
-    }
-
-    router.push(`/Courses/${cid}/Assignments`);
+    (async () => {
+      try {
+        if (aid && aid !== "new") {
+          const updated = await client.updateAssignment({ ...assignmentData, _id: aid });
+          dispatch(updateAssignment(updated));
+        } else {
+          const created = await client.createAssignment(assignmentData);
+          dispatch(addAssignment(created));
+        }
+        router.push(`/Courses/${cid}/Assignments`);
+      } catch (e) {
+        console.error('save failed', e);
+        alert('Failed to save assignment');
+      }
+    })();
   };
 
   const handleCancel = () => {

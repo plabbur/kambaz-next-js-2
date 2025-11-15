@@ -7,7 +7,9 @@ import AssignmentTitleControlButtons from "./AssignmentTitleControlButtons";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignments } from "./reducer";
+import * as client from "./client";
+import { useEffect } from "react";
 import { ParamValue } from "next/dist/server/request/params";
 
 interface Assignment {
@@ -69,11 +71,26 @@ export default function Assignments() {
 
   const handleConfirmDelete = () => {
     if (assignmentToDelete) {
-      dispatch(deleteAssignment(assignmentToDelete));
+      // call server then dispatch
+      client.deleteAssignment(assignmentToDelete).then(() => {
+        dispatch(deleteAssignment(assignmentToDelete));
+      }).catch((e) => console.error('delete failed', e));
     }
     setShowDeleteModal(false);
     setAssignmentToDelete(null);
   };
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const items = await client.findAssignmentsForCourse(cid as string);
+        dispatch(setAssignments(items));
+      } catch (e) {
+        console.error('failed to load assignments', e);
+      }
+    };
+    load();
+  }, [cid, dispatch]);
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
