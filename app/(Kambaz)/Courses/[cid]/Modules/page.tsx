@@ -39,11 +39,14 @@ export default function Modules() {
   };
   const onCreateModuleForCourse = async () => {
     if (!cid) return;
-  // ensure cid is a string (useParams can return string | string[])
-  const courseId = Array.isArray(cid) ? cid[0] : cid;
-  const newModule = { name: moduleName, course: courseId };
-  const module = await client.createModuleForCourse(courseId as string, newModule);
-    dispatch(setModules([...modules, module]));
+    // ensure cid is a string (useParams can return string | string[])
+    const courseId = Array.isArray(cid) ? cid[0] : cid;
+    const newModule = { name: moduleName, course: courseId };
+    const createdModule = await client.createModuleForCourse(
+      courseId as string,
+      newModule
+    );
+    dispatch(setModules([...modules, createdModule]));
   };
   const onRemoveModule = async (moduleId: string) => {
     await client.deleteModule(moduleId);
