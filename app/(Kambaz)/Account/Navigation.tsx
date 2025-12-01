@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
 
 export default function AccountNavigation() {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
   const pathname = usePathname();
 
   const getLinkClasses = (path: string) => {
@@ -38,7 +40,17 @@ export default function AccountNavigation() {
         {" "}
         Profile{" "}
       </Link>
+
       <br />
+      {currentUser && currentUser.role === "ADMIN" && (
+        <Link
+          href={`/Account/Users`}
+          className={getLinkClasses("/Account/Users")}
+        >
+          {" "}
+          Users{" "}
+        </Link>
+      )}
     </div>
   );
 }
