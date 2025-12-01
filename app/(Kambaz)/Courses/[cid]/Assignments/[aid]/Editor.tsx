@@ -2,9 +2,7 @@
 
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { useParams, useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
-import { addAssignment, updateAssignment } from "../reducer";
+import { useState, useEffect } from "react";
 import * as client from "../client";
 
 interface Assignment {
@@ -21,23 +19,41 @@ interface Assignment {
 export default function AssignmentEditor() {
   const { aid, cid } = useParams();
   const router = useRouter();
-  const dispatch = useDispatch();
   
-  // Get existing assignment if we're editing
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-  const existingAssignment = assignments.find((a: any) => a._id === aid);
-  
-  const [assignment, setAssignment] = useState(
-    existingAssignment || {
-      title: "",
-      description: "",
-      points: 100,
-      course: cid,
-      dueDate: "",
-      availableDate: "",
-      availableUntilDate: "",
-    }
-  );
+  const [assignment, setAssignment] = useState<Assignment>({
+    title: "",
+    description: "",
+    points: 100,
+    course: cid as string,
+    dueDate: "",
+    availableDate: "",
+    availableUntilDate: "",
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAssignment = async () => {
+      if (aid && aid !== "new") {
+        try {
+          const assignments = await client.findAssignmentsForCourse(cid as string);
+          const existingAssignment = assignments.find((a: any) => a._id === aid);
+          if (existingAssignment) {
+            setAssignment({
+              ...existingAssignment,
+              dueDate: existingAssignment.dueDate ? existingAssignment.dueDate.split('T')[0] : "",
+              availableDate: existingAssignment.availableDate ? existingAssignment.availableDate.split('T')[0] : "",
+              availableUntilDate: existingAssignment.availableUntilDate ? existingAssignment.availableUntilDate.split('T')[0] : "",
+            });
+          }
+        } catch (e) {
+          console.error('Failed to load assignment', e);
+        }
+      }
+      setLoading(false);
+    };
+    fetchAssignment();
+  }, [aid, cid]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -47,7 +63,7 @@ export default function AssignmentEditor() {
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Ensure we have at least a title
     if (!assignment.title.trim()) {
       alert("Please enter an assignment name");
@@ -57,30 +73,31 @@ export default function AssignmentEditor() {
     // Prepare the assignment data
     const assignmentData = {
       ...assignment,
-      course: cid,
+      course: cid?.toString(),
       points: Number(assignment.points) || 100,
     };
 
-    (async () => {
-      try {
-        if (aid && aid !== "new") {
-          const updated = await client.updateAssignment({ ...assignmentData, _id: aid });
-          dispatch(updateAssignment(updated));
-        } else {
-          const created = await client.createAssignment(assignmentData);
-          dispatch(addAssignment(created));
-        }
-        router.push(`/Courses/${cid}/Assignments`);
-      } catch (e) {
-        console.error('save failed', e);
-        alert('Failed to save assignment');
+    try {
+      if (aid && aid !== "new") {
+        await client.updateAssignment({ ...assignmentData, _id: aid });
+      } else {
+        await client.createAssignment(assignmentData);
       }
-    })();
+      // After save, always reload assignments from backend for consistency
+      router.push(`/Courses/${cid}/Assignments`);
+    } catch (e) {
+      console.error('save failed', e);
+      alert('Failed to save assignment');
+    }
   };
 
   const handleCancel = () => {
     router.push(`/Courses/${cid}/Assignments`);
   };
+
+  if (loading) {
+    return <div className="p-4">Loading...</div>;
+  }
 
   return (
     <div id="wd-assignments-editor" className="d-flex">

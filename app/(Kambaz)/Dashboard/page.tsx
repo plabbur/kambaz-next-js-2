@@ -131,11 +131,12 @@ const CourseCard = ({
 export default function Dashboard() {
   const { courses } = useSelector((state: any) => state.coursesReducer);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+  // After enrollments API refactor, enrollments is now an array of enrolled course objects
   const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
   const dispatch = useDispatch();
   const [showAllCourses, setShowAllCourses] = useState(false);
 
-  const [course, setCourse] = useState<CourseType>({
+  const emptyCourse: CourseType = {
     _id: "0",
     name: "New Course",
     number: "New Number",
@@ -145,14 +146,12 @@ export default function Dashboard() {
     description: "New Description",
     department: "New Department",
     credits: 3,
-  });
+  };
+  const [course, setCourse] = useState<CourseType>(emptyCourse);
 
-  const filteredCourses = courses.filter((c: CourseType) => {
-    if (showAllCourses) return true;
-    return enrollments.some(
-      (en: any) => en.user === currentUser._id && en.course === c._id
-    );
-  });
+  const filteredCourses = showAllCourses
+    ? courses
+    : enrollments;
 
   const fetchCourses = async () => {
     try {
@@ -167,6 +166,7 @@ export default function Dashboard() {
   const onAddNewCourse = async () => {
     const newCourse = await client.createCourse(course);
     dispatch(setCourses([...courses, newCourse]));
+    setCourse(emptyCourse);
   };
 
   const onDeleteCourse = async (courseId: string) => {
@@ -179,18 +179,15 @@ export default function Dashboard() {
   };
 
   const onUpdateCourse = async () => {
-    await client.updateCourse(course);
+    const updated = await client.updateCourse(course);
     dispatch(
       setCourses(
-        courses.map((c: CourseType) => {
-          if (c._id === course._id) {
-            return course;
-          } else {
-            return c;
-          }
-        })
+        courses.map((c: CourseType) =>
+          c._id === updated._id ? updated : c
+        )
       )
     );
+    setCourse(emptyCourse);
   };
 
   useEffect(() => {
@@ -198,9 +195,8 @@ export default function Dashboard() {
     const loadEnrollments = async () => {
       if (!currentUser) return;
       try {
-        const items = await enrollClient.findEnrollmentsForUser(
-          currentUser._id
-        );
+        // items is now an array of enrolled course objects
+        const items = await enrollClient.findEnrollmentsForUser(currentUser._id);
         dispatch(setEnrollments(items));
       } catch (e) {
         console.error("failed to load enrollments", e);
@@ -210,27 +206,23 @@ export default function Dashboard() {
   }, [currentUser]);
 
   const isEnrolled = (courseId: string) => {
-    if (!currentUser) {
-      return false;
-    }
-    return enrollments.some(
-      (enrollment: any) =>
-        enrollment.user === currentUser._id && enrollment.course === courseId
-    );
+    // enrollments is now an array of course objects
+    return enrollments.some((c: CourseType) => c._id === courseId);
   };
 
-  const handleEnrollment = (courseId: string, isCurrentlyEnrolled: boolean) => {
+  const handleEnrollment = async (courseId: string, isCurrentlyEnrolled: boolean) => {
     if (!currentUser) return;
-    if (isCurrentlyEnrolled) {
-      enrollClient
-        .unenroll(currentUser._id, courseId)
-        .then(() => dispatch(unenroll({ userId: currentUser._id, courseId })))
-        .catch((e) => console.error("unenroll failed", e));
-    } else {
-      enrollClient
-        .enroll(currentUser._id, courseId)
-        .then(() => dispatch(enroll({ userId: currentUser._id, courseId })))
-        .catch((e) => console.error("enroll failed", e));
+    try {
+      if (isCurrentlyEnrolled) {
+        await enrollClient.unenroll(currentUser._id, courseId);
+      } else {
+        await enrollClient.enroll(currentUser._id, courseId);
+      }
+      // Always reload enrollments after change
+      const items = await enrollClient.findEnrollmentsForUser(currentUser._id);
+      dispatch(setEnrollments(items));
+    } catch (e) {
+      console.error('enroll/unenroll failed', e);
     }
   };
 
@@ -290,7 +282,7 @@ export default function Dashboard() {
               course={course}
               deleteCourse={() => onDeleteCourse(course._id)}
               editCourse={
-                currentUser.role === "FACULTY"
+                currentUser.role === "FACULTY" || currentUser.role === "ADMIN"
                   ? (event: Event) => {
                       event.preventDefault();
                       setCourse(course);
@@ -301,7 +293,9 @@ export default function Dashboard() {
               onEnrollmentClick={() =>
                 handleEnrollment(course._id, isEnrolled(course._id))
               }
-              showAdminControls={currentUser.role === "FACULTY"}
+              showAdminControls={
+                currentUser.role === "FACULTY" || currentUser.role === "ADMIN"
+              }
             />
           ))}
         </Row>

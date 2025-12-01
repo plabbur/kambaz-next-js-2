@@ -8,15 +8,6 @@ import LessonControlButtons from "./LessonControlButtons";
 import ModuleControlButtons from "./ModuleControlButtons";
 import * as client from "../../client";
 
-import {
-  setModules,
-  addModule,
-  editModule,
-  updateModule,
-  deleteModule,
-} from "./reducer";
-import { useSelector, useDispatch } from "react-redux";
-
 const ModuleLessonItem = ({ lesson }: { lesson: LessonType }) => {
   return (
     <ListGroupItem className="wd-lesson p-3 ps-1">
@@ -29,40 +20,72 @@ const ModuleLessonItem = ({ lesson }: { lesson: LessonType }) => {
 
 export default function Modules() {
   const { cid } = useParams();
-
   const [moduleName, setModuleName] = useState("");
-  const { modules } = useSelector((state: any) => state.modulesReducer);
-  const dispatch = useDispatch();
+  const [modules, setModules] = useState<any[]>([]);
+  
   const fetchModules = async () => {
-    const modules = await client.findModulesForCourse(cid as string);
-    dispatch(setModules(modules));
+    try {
+      const fetchedModules = await client.findModulesForCourse(cid as string);
+      setModules(fetchedModules);
+    } catch (error) {
+      console.error("Failed to fetch modules:", error);
+    }
   };
+  
   const onCreateModuleForCourse = async () => {
     if (!cid) return;
-    // ensure cid is a string (useParams can return string | string[])
     const courseId = Array.isArray(cid) ? cid[0] : cid;
     const newModule = { name: moduleName, course: courseId };
-    const createdModule = await client.createModuleForCourse(
-      courseId as string,
-      newModule
-    );
-    dispatch(setModules([...modules, createdModule]));
+    try {
+      const createdModule = await client.createModuleForCourse(
+        courseId as string,
+        newModule
+      );
+      setModules([...modules, createdModule]);
+      setModuleName(""); // Clear input after creating
+    } catch (error) {
+      console.error("Failed to create module:", error);
+    }
   };
+  
   const onRemoveModule = async (moduleId: string) => {
-    await client.deleteModule(moduleId);
-    dispatch(setModules(modules.filter((m: any) => m._id !== moduleId)));
+    try {
+      await client.deleteModule(cid as string, moduleId);
+      setModules(modules.filter((m: any) => m._id !== moduleId));
+    } catch (error) {
+      console.error("Failed to delete module:", error);
+    }
   };
+  
   const onUpdateModule = async (module: any) => {
-    await client.updateModule(module);
+    try {
+      await client.updateModule(cid as string, module);
+      const newModules = modules.map((m: any) =>
+        m._id === module._id ? module : m
+      );
+      setModules(newModules);
+    } catch (error) {
+      console.error("Failed to update module:", error);
+    }
+  };
+  
+  const handleEditModule = (moduleId: string) => {
     const newModules = modules.map((m: any) =>
-      m._id === module._id ? module : m
+      m._id === moduleId ? { ...m, editing: true } : m
     );
-    dispatch(setModules(newModules));
+    setModules(newModules);
+  };
+  
+  const handleModuleNameChange = (moduleId: string, newName: string) => {
+    const newModules = modules.map((m: any) =>
+      m._id === moduleId ? { ...m, name: newName } : m
+    );
+    setModules(newModules);
   };
 
   useEffect(() => {
     fetchModules();
-  }, []);
+  }, [cid]);
 
   return (
     <div>
@@ -91,9 +114,7 @@ export default function Modules() {
                   <FormControl
                     className="w-50 d-inline-block"
                     onChange={(e) =>
-                      dispatch(
-                        updateModule({ ...module, name: e.target.value })
-                      )
+                      handleModuleNameChange(module._id, e.target.value)
                     }
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
@@ -106,7 +127,7 @@ export default function Modules() {
                 <ModuleControlButtons
                   moduleId={module._id}
                   deleteModule={(moduleId) => onRemoveModule(moduleId)}
-                  editModule={(moduleId) => dispatch(editModule(moduleId))}
+                  editModule={(moduleId) => handleEditModule(moduleId)}
                 />
               </div>
               {module.lessons && (

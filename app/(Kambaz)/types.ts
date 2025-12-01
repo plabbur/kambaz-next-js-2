@@ -4,6 +4,9 @@ interface AssignmentType {
   description: string;
   points: number;
   course: string;
+  dueDate?: string;
+  availableDate?: string;
+  availableUntilDate?: string;
 }
 
 interface CourseType {

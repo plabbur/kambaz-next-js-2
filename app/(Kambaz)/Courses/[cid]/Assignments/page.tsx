@@ -5,11 +5,8 @@ import { BsGripVertical, BsSearch, BsPlus, BsTrash } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
 import AssignmentTitleControlButtons from "./AssignmentTitleControlButtons";
 import { useParams } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
-import { deleteAssignment, setAssignments } from "./reducer";
+import { useState, useEffect } from "react";
 import * as client from "./client";
-import { useEffect } from "react";
 import { ParamValue } from "next/dist/server/request/params";
 
 interface Assignment {
@@ -58,39 +55,53 @@ const AssignmentItem = ({
 };
 
 export default function Assignments() {
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
   const { cid } = useParams();
-  const dispatch = useDispatch();
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assignmentToDelete, setAssignmentToDelete] = useState<string | null>(null);
 
   const handleDeleteClick = (assignmentId: string) => {
+    console.log('Delete button clicked for assignment:', assignmentId);
     setAssignmentToDelete(assignmentId);
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = () => {
+  const fetchAssignments = async () => {
+    try {
+      console.log('Fetching assignments for course:', cid);
+      const items = await client.findAssignmentsForCourse(cid as string);
+      console.log('Fetched assignments:', items);
+      console.log('First assignment structure:', items[0]);
+      console.log('First assignment _id:', items[0]?._id);
+      setAssignments(items);
+    } catch (e) {
+      console.error('Failed to load assignments:', e);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    console.log('Confirm delete clicked, assignmentToDelete:', assignmentToDelete);
     if (assignmentToDelete) {
-      // call server then dispatch
-      client.deleteAssignment(assignmentToDelete).then(() => {
-        dispatch(deleteAssignment(assignmentToDelete));
-      }).catch((e) => console.error('delete failed', e));
+      try {
+        console.log('Deleting assignment:', assignmentToDelete);
+        const result = await client.deleteAssignment(assignmentToDelete);
+        console.log('Delete result:', result);
+        // Update local state immediately after successful delete
+        setAssignments(assignments.filter(a => a._id !== assignmentToDelete));
+      } catch (e: any) {
+        console.error('Delete failed:', e);
+        console.error('Error details:', e.response?.data || e.message);
+        alert('Failed to delete assignment. Please try again.');
+      }
     }
     setShowDeleteModal(false);
     setAssignmentToDelete(null);
   };
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const items = await client.findAssignmentsForCourse(cid as string);
-        dispatch(setAssignments(items));
-      } catch (e) {
-        console.error('failed to load assignments', e);
-      }
-    };
-    load();
-  }, [cid, dispatch]);
+    fetchAssignments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cid]);
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
@@ -131,16 +142,14 @@ export default function Assignments() {
             <AssignmentTitleControlButtons />
           </div>
           <ListGroup className="wd-assignment-list rounded-0">
-            {assignments
-              .filter((assignment: Assignment) => assignment.course === cid)
-              .map((assignment: Assignment) => (
-                <AssignmentItem
-                  key={assignment._id}
-                  assignment={assignment}
-                  cid={cid}
-                  onDelete={handleDeleteClick}
-                />
-              ))}
+            {assignments.map((assignment: Assignment) => (
+              <AssignmentItem
+                key={assignment._id}
+                assignment={assignment}
+                cid={cid}
+                onDelete={handleDeleteClick}
+              />
+            ))}
           </ListGroup>
         </ListGroupItem>
       </ListGroup>

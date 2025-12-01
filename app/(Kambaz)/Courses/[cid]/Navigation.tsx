@@ -14,7 +14,7 @@ export default function CourseNavigation() {
     { label: "Assignments", path: "/Assignments" },
     { label: "Quizzes", path: "/Quizzes" },
     { label: "Grades", path: "/Grades" },
-    { label: "People", path: "/People/Table" },
+    { label: "People", path: "/People" },
   ];
 
   const getLinkClasses = (path: string) => {
