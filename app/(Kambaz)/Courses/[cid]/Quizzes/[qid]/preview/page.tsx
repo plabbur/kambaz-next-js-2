@@ -185,7 +185,8 @@ export default function QuizPreview() {
 
       {!quiz.questions || quiz.questions.length === 0 ? (
         <Alert variant="warning">
-          This quiz has no questions yet. Click "Edit Quiz" to add questions.
+          This quiz has no questions yet. Click &quot;Edit Quiz&quot; to add
+          questions.
         </Alert>
       ) : (
         <>
@@ -206,34 +207,40 @@ export default function QuizPreview() {
                   <p className="fw-bold">{currentQuestion.question}</p>
 
                   {/* Multiple Choice */}
-                  {currentQuestion.type === "MULTIPLE_CHOICE" && currentQuestion.choices && (
-                    <div>
-                      {currentQuestion.choices.map((choice, i) => {
-                        const isSelected = answers[currentQuestion._id] === choice;
+                  {currentQuestion.type === "MULTIPLE_CHOICE" &&
+                    currentQuestion.choices && (
+                      <div>
+                        {currentQuestion.choices.map((choice, i) => {
+                          const isSelected =
+                            answers[currentQuestion._id] === choice;
 
-                        return (
-                          <div key={i} className="mb-2 p-2 rounded">
-                            <Form.Check
-                              type="radio"
-                              id={`${currentQuestion._id}-choice-${i}`}
-                              name={`question-${currentQuestion._id}`}
-                              label={choice}
-                              checked={isSelected}
-                              onChange={() =>
-                                handleAnswerChange(currentQuestion._id, choice)
-                              }
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                          return (
+                            <div key={i} className="mb-2 p-2 rounded">
+                              <Form.Check
+                                type="radio"
+                                id={`${currentQuestion._id}-choice-${i}`}
+                                name={`question-${currentQuestion._id}`}
+                                label={choice}
+                                checked={isSelected}
+                                onChange={() =>
+                                  handleAnswerChange(
+                                    currentQuestion._id,
+                                    choice
+                                  )
+                                }
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
 
                   {/* True/False */}
                   {currentQuestion.type === "TRUE_FALSE" && (
                     <div>
                       {[true, false].map((value) => {
-                        const isSelected = answers[currentQuestion._id] === value;
+                        const isSelected =
+                          answers[currentQuestion._id] === value;
 
                         return (
                           <div key={String(value)} className="mb-2 p-2 rounded">
@@ -260,7 +267,10 @@ export default function QuizPreview() {
                         type="text"
                         value={answers[currentQuestion._id] || ""}
                         onChange={(e) =>
-                          handleAnswerChange(currentQuestion._id, e.target.value)
+                          handleAnswerChange(
+                            currentQuestion._id,
+                            e.target.value
+                          )
                         }
                         placeholder="Enter your answer"
                       />
@@ -288,173 +298,174 @@ export default function QuizPreview() {
             </>
           )}
 
-          {submitted && quiz.questions.map((question, index) => (
-            <Card
-              key={question._id}
-              className={`mb-3 ${
-                submitted
-                  ? results[question._id]
-                    ? "border-success"
-                    : "border-danger"
-                  : ""
-              }`}
-            >
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-start mb-3">
-                  <h5>
-                    Question {index + 1}
-                    {submitted && (
-                      <span className="ms-2">
-                        {results[question._id] ? (
-                          <span className="text-success">✓ Correct</span>
-                        ) : (
-                          <span className="text-danger">✗ Incorrect</span>
-                        )}
-                      </span>
-                    )}
-                  </h5>
-                  <span className="badge bg-secondary">
-                    {question.points} pts
-                  </span>
-                </div>
-
-                <p className="fw-bold">{question.question}</p>
-
-                {/* Multiple Choice */}
-                {question.type === "MULTIPLE_CHOICE" && question.choices && (
-                  <div>
-                    {question.choices.map((choice, i) => {
-                      const isSelected = answers[question._id] === choice;
-                      const isCorrect = choice === question.correct_answer;
-
-                      return (
-                        <div
-                          key={i}
-                          className={`mb-2 p-2 rounded ${
-                            submitted
-                              ? isCorrect
-                                ? "bg-success bg-opacity-10"
-                                : isSelected
-                                ? "bg-danger bg-opacity-10"
-                                : ""
-                              : ""
-                          }`}
-                        >
-                          <Form.Check
-                            type="radio"
-                            id={`${question._id}-choice-${i}`}
-                            name={`question-${question._id}`}
-                            label={
-                              <span>
-                                {choice}
-                                {submitted && isCorrect && (
-                                  <span className="text-success ms-2">
-                                    ✓ Correct Answer
-                                  </span>
-                                )}
-                              </span>
-                            }
-                            checked={isSelected}
-                            onChange={() =>
-                              !submitted &&
-                              handleAnswerChange(question._id, choice)
-                            }
-                            disabled={submitted}
-                          />
-                        </div>
-                      );
-                    })}
+          {submitted &&
+            quiz.questions.map((question, index) => (
+              <Card
+                key={question._id}
+                className={`mb-3 ${
+                  submitted
+                    ? results[question._id]
+                      ? "border-success"
+                      : "border-danger"
+                    : ""
+                }`}
+              >
+                <Card.Body>
+                  <div className="d-flex justify-content-between align-items-start mb-3">
+                    <h5>
+                      Question {index + 1}
+                      {submitted && (
+                        <span className="ms-2">
+                          {results[question._id] ? (
+                            <span className="text-success">✓ Correct</span>
+                          ) : (
+                            <span className="text-danger">✗ Incorrect</span>
+                          )}
+                        </span>
+                      )}
+                    </h5>
+                    <span className="badge bg-secondary">
+                      {question.points} pts
+                    </span>
                   </div>
-                )}
 
-                {/* True/False */}
-                {question.type === "TRUE_FALSE" && (
-                  <div>
-                    {[true, false].map((value) => {
-                      const isSelected = answers[question._id] === value;
-                      const isCorrect = value === question.correct_answer;
+                  <p className="fw-bold">{question.question}</p>
 
-                      return (
-                        <div
-                          key={String(value)}
-                          className={`mb-2 p-2 rounded ${
-                            submitted
-                              ? isCorrect
-                                ? "bg-success bg-opacity-10"
-                                : isSelected
-                                ? "bg-danger bg-opacity-10"
+                  {/* Multiple Choice */}
+                  {question.type === "MULTIPLE_CHOICE" && question.choices && (
+                    <div>
+                      {question.choices.map((choice, i) => {
+                        const isSelected = answers[question._id] === choice;
+                        const isCorrect = choice === question.correct_answer;
+
+                        return (
+                          <div
+                            key={i}
+                            className={`mb-2 p-2 rounded ${
+                              submitted
+                                ? isCorrect
+                                  ? "bg-success bg-opacity-10"
+                                  : isSelected
+                                  ? "bg-danger bg-opacity-10"
+                                  : ""
                                 : ""
-                              : ""
-                          }`}
-                        >
-                          <Form.Check
-                            type="radio"
-                            id={`${question._id}-${value}`}
-                            name={`question-${question._id}`}
-                            label={
-                              <span>
-                                {value ? "True" : "False"}
-                                {submitted && isCorrect && (
-                                  <span className="text-success ms-2">
-                                    ✓ Correct Answer
-                                  </span>
-                                )}
-                              </span>
-                            }
-                            checked={isSelected}
-                            onChange={() =>
-                              !submitted &&
-                              handleAnswerChange(question._id, value)
-                            }
-                            disabled={submitted}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Fill in Blank */}
-                {question.type === "FILL_IN_BLANK" && (
-                  <div>
-                    <Form.Control
-                      type="text"
-                      value={answers[question._id] || ""}
-                      onChange={(e) =>
-                        !submitted &&
-                        handleAnswerChange(question._id, e.target.value)
-                      }
-                      placeholder="Enter your answer"
-                      disabled={submitted}
-                      className={
-                        submitted
-                          ? results[question._id]
-                            ? "border-success"
-                            : "border-danger"
-                          : ""
-                      }
-                    />
-                    {submitted && (
-                      <div className="mt-2">
-                        <small className="text-muted">
-                          <strong>Acceptable answers:</strong>{" "}
-                          {question.possible_answers?.join(", ")}
-                        </small>
-                        {answers[question._id] && (
-                          <div className="mt-1">
-                            <small>
-                              <strong>Your answer:</strong>{" "}
-                              {answers[question._id]}
-                            </small>
+                            }`}
+                          >
+                            <Form.Check
+                              type="radio"
+                              id={`${question._id}-choice-${i}`}
+                              name={`question-${question._id}`}
+                              label={
+                                <span>
+                                  {choice}
+                                  {submitted && isCorrect && (
+                                    <span className="text-success ms-2">
+                                      ✓ Correct Answer
+                                    </span>
+                                  )}
+                                </span>
+                              }
+                              checked={isSelected}
+                              onChange={() =>
+                                !submitted &&
+                                handleAnswerChange(question._id, choice)
+                              }
+                              disabled={submitted}
+                            />
                           </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </Card.Body>
-            </Card>
-          ))}
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* True/False */}
+                  {question.type === "TRUE_FALSE" && (
+                    <div>
+                      {[true, false].map((value) => {
+                        const isSelected = answers[question._id] === value;
+                        const isCorrect = value === question.correct_answer;
+
+                        return (
+                          <div
+                            key={String(value)}
+                            className={`mb-2 p-2 rounded ${
+                              submitted
+                                ? isCorrect
+                                  ? "bg-success bg-opacity-10"
+                                  : isSelected
+                                  ? "bg-danger bg-opacity-10"
+                                  : ""
+                                : ""
+                            }`}
+                          >
+                            <Form.Check
+                              type="radio"
+                              id={`${question._id}-${value}`}
+                              name={`question-${question._id}`}
+                              label={
+                                <span>
+                                  {value ? "True" : "False"}
+                                  {submitted && isCorrect && (
+                                    <span className="text-success ms-2">
+                                      ✓ Correct Answer
+                                    </span>
+                                  )}
+                                </span>
+                              }
+                              checked={isSelected}
+                              onChange={() =>
+                                !submitted &&
+                                handleAnswerChange(question._id, value)
+                              }
+                              disabled={submitted}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Fill in Blank */}
+                  {question.type === "FILL_IN_BLANK" && (
+                    <div>
+                      <Form.Control
+                        type="text"
+                        value={answers[question._id] || ""}
+                        onChange={(e) =>
+                          !submitted &&
+                          handleAnswerChange(question._id, e.target.value)
+                        }
+                        placeholder="Enter your answer"
+                        disabled={submitted}
+                        className={
+                          submitted
+                            ? results[question._id]
+                              ? "border-success"
+                              : "border-danger"
+                            : ""
+                        }
+                      />
+                      {submitted && (
+                        <div className="mt-2">
+                          <small className="text-muted">
+                            <strong>Acceptable answers:</strong>{" "}
+                            {question.possible_answers?.join(", ")}
+                          </small>
+                          {answers[question._id] && (
+                            <div className="mt-1">
+                              <small>
+                                <strong>Your answer:</strong>{" "}
+                                {answers[question._id]}
+                              </small>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </Card.Body>
+              </Card>
+            ))}
 
           {!submitted && (
             <div className="d-flex justify-content-center gap-2 mt-4 pt-4 border-top">

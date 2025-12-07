@@ -498,7 +498,7 @@ export default function QuizEditor() {
 
             {questions.length === 0 ? (
               <div className="text-center p-5 text-muted">
-                <p>No questions yet. Click "New Question" to add one.</p>
+                <p>No questions yet. Click &quot;New Question&quot; to add one.</p>
               </div>
             ) : (
               questions.map((question, index) => (
