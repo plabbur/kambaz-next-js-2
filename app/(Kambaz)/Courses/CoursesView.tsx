@@ -12,10 +12,8 @@ import {
   FormControl,
   Row,
 } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { setEnrollments } from "../Account/enrollmentsReducer";
+import { useSelector } from "react-redux";
 import * as enrollClient from "../Account/enrollmentsClient";
-import { setCourses } from "./reducer";
 import { randomColor } from "../utils";
 import { useRouter } from "next/navigation";
 import * as client from "./client";
@@ -122,11 +120,10 @@ export default function CoursesView({
 }: {
   showCourseEditor?: boolean;
 }) {
-  const { courses } = useSelector((state: any) => state.coursesReducer);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
-  const dispatch = useDispatch();
   const [showAllCourses, setShowAllCourses] = useState(false);
+  const [courses, setCourses] = useState<CourseType[]>([]);
+  const [enrolledCourses, setEnrolledCourses] = useState<CourseType[]>([]);
 
   const emptyCourse: CourseType = {
     _id: "0",
@@ -141,38 +138,50 @@ export default function CoursesView({
   };
   const [course, setCourse] = useState<CourseType>(emptyCourse);
 
-  const filteredCourses = showAllCourses ? courses : enrollments;
+  const filteredCourses = showAllCourses ? courses : enrolledCourses;
 
   const fetchCourses = async () => {
     try {
-      const courses = await client.fetchAllCourses();
-      dispatch(setCourses(courses));
+      const fetchedCourses = await client.fetchAllCourses();
+      setCourses(fetchedCourses);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const loadEnrollments = async () => {
+    if (!currentUser) return;
+    try {
+      const items = await enrollClient.findEnrollmentsForUser(currentUser._id);
+      setEnrolledCourses(items);
+    } catch (e) {
+      console.error("failed to load enrollments", e);
     }
   };
 
   const onAddNewCourse = async () => {
     const courseWithColor = { ...course, color: randomColor() };
     const newCourse = await client.createCourse(courseWithColor);
-    dispatch(setCourses([...courses, newCourse]));
+    setCourses([...courses, newCourse]);
     setCourse(emptyCourse);
   };
 
   const onDeleteCourse = async (courseId: string) => {
-    const status = await client.deleteCourse(courseId);
-    dispatch(
-      setCourses(
-        courses.filter((course: CourseType) => course._id !== courseId)
-      )
+    await client.deleteCourse(courseId);
+    setCourses(courses.filter((course: CourseType) => course._id !== courseId));
+    setEnrolledCourses(
+      enrolledCourses.filter((course: CourseType) => course._id !== courseId)
     );
   };
 
   const onUpdateCourse = async () => {
     const updated = await client.updateCourse(course);
-    dispatch(
-      setCourses(
-        courses.map((c: CourseType) => (c._id === updated._id ? updated : c))
+    setCourses(
+      courses.map((c: CourseType) => (c._id === updated._id ? updated : c))
+    );
+    setEnrolledCourses(
+      enrolledCourses.map((c: CourseType) =>
+        c._id === updated._id ? updated : c
       )
     );
     setCourse(emptyCourse);
@@ -180,22 +189,11 @@ export default function CoursesView({
 
   useEffect(() => {
     fetchCourses();
-    const loadEnrollments = async () => {
-      if (!currentUser) return;
-      try {
-        const items = await enrollClient.findEnrollmentsForUser(
-          currentUser._id
-        );
-        dispatch(setEnrollments(items));
-      } catch (e) {
-        console.error("failed to load enrollments", e);
-      }
-    };
     loadEnrollments();
   }, [currentUser]);
 
   const isEnrolled = (courseId: string) => {
-    return enrollments.some((c: CourseType) => c._id === courseId);
+    return enrolledCourses.some((c: CourseType) => c._id === courseId);
   };
 
   const handleEnrollment = async (
@@ -209,8 +207,8 @@ export default function CoursesView({
       } else {
         await enrollClient.enroll(currentUser._id, courseId);
       }
-      const items = await enrollClient.findEnrollmentsForUser(currentUser._id);
-      dispatch(setEnrollments(items));
+      // Reload enrollments after change
+      await loadEnrollments();
     } catch (e) {
       console.error("enroll/unenroll failed", e);
     }
