@@ -22,7 +22,7 @@ export default function Modules() {
   const { cid } = useParams();
   const [moduleName, setModuleName] = useState("");
   const [modules, setModules] = useState<any[]>([]);
-  
+
   const fetchModules = async () => {
     try {
       const fetchedModules = await client.findModulesForCourse(cid as string);
@@ -31,7 +31,7 @@ export default function Modules() {
       console.error("Failed to fetch modules:", error);
     }
   };
-  
+
   const onCreateModuleForCourse = async () => {
     if (!cid) return;
     const courseId = Array.isArray(cid) ? cid[0] : cid;
@@ -47,7 +47,7 @@ export default function Modules() {
       console.error("Failed to create module:", error);
     }
   };
-  
+
   const onRemoveModule = async (moduleId: string) => {
     try {
       await client.deleteModule(cid as string, moduleId);
@@ -56,7 +56,7 @@ export default function Modules() {
       console.error("Failed to delete module:", error);
     }
   };
-  
+
   const onUpdateModule = async (module: any) => {
     try {
       await client.updateModule(cid as string, module);
@@ -68,14 +68,14 @@ export default function Modules() {
       console.error("Failed to update module:", error);
     }
   };
-  
+
   const handleEditModule = (moduleId: string) => {
     const newModules = modules.map((m: any) =>
       m._id === moduleId ? { ...m, editing: true } : m
     );
     setModules(newModules);
   };
-  
+
   const handleModuleNameChange = (moduleId: string, newName: string) => {
     const newModules = modules.map((m: any) =>
       m._id === moduleId ? { ...m, name: newName } : m
@@ -94,11 +94,7 @@ export default function Modules() {
         setModuleName={setModuleName}
         addModule={onCreateModuleForCourse}
       />
-
-      <br />
-      <br />
-      <br />
-
+      <div className="clearfix mb-3"></div>
       <ListGroup className="rounded-0" id="wd-modules">
         {modules
           // .filter((module: any) => module.course === cid)

@@ -20,7 +20,7 @@ export default function CoursesLayout({
   return (
     <div id="wd-courses">
       <h2 className="text-danger">
-        <button 
+        <button
           onClick={() => setShowNav(!showNav)}
           className="btn btn-link border-0 text-danger p-0 text-decoration-none"
         >

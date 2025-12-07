@@ -1,0 +1,106 @@
+[
+  {
+    "_id": "quiz1",
+    "cid": "RS102",
+    "title": "Q1 - HTML",
+    "type": "GRADED_QUIZ",
+    "points": 3,
+    "assignment_ground": "QUIZZES",
+    "shuffle_answers": true,
+    "time_limit": 30,
+    "multiple_attempts": true,
+    "show_correct_answers": true,
+    "access_code": "abc123",
+    "one_question_at_a_time": false,
+    "lock_questions_after_answering": true,
+    "due_date": {
+      "$date": "2024-09-21T17:00:00.000Z"
+    },
+    "available_date": {
+      "$date": "2024-09-01T04:00:00.000Z"
+    },
+    "until_date": {
+      "$date": "2024-09-21T17:00:00.000Z"
+    },
+    "questions": [
+      {
+        "_id": "q1765133008676",
+        "type": "MULTIPLE_CHOICE",
+        "title": "Question 1",
+        "points": 1,
+        "question": "ffff",
+        "choices": ["yes", "no"],
+        "correct_answer": "",
+        "possible_answers": [""],
+        "isEditing": false
+      },
+      {
+        "_id": "q1765133040163",
+        "type": "FILL_IN_BLANK",
+        "title": "Question 3",
+        "points": 1,
+        "question": "tell me something",
+        "choices": [""],
+        "correct_answer": "",
+        "possible_answers": ["something"],
+        "isEditing": false
+      },
+      {
+        "_id": "q1765133278990",
+        "type": "TRUE_FALSE",
+        "title": "Question 3",
+        "points": 1,
+        "question": "okayyyyyyy true",
+        "choices": [""],
+        "correct_answer": true,
+        "possible_answers": [""],
+        "isEditing": false
+      }
+    ],
+    "published": true,
+    "instructions": "hello"
+  },
+  {
+    "_id": "quiz2",
+    "cid": "RS102",
+    "title": "Q2 - CSS",
+    "type": "GRADED_QUIZ",
+    "points": 32,
+    "assignment_ground": "QUIZZES",
+    "shuffle_answers": false,
+    "time_limit": 15,
+    "multiple_attempts": true,
+    "how_many_attempts": 3,
+    "show_correct_answers": false,
+    "access_code": "def456",
+    "one_question_at_a_time": true,
+    "lock_questions_after_answering": false,
+    "due_date": "2025-12-15T13:00:00",
+    "available_date": "2025-12-01T00:00:00",
+    "until_date": "2025-12-15T13:00:00",
+    "questions": [],
+    "published": false,
+    "instructions": ""
+  },
+  {
+    "_id": "quiz3",
+    "cid": "RS102",
+    "title": "EXAM 1 FA 23",
+    "type": "GRADED_QUIZ",
+    "points": 113,
+    "assignment_ground": "EXAMS",
+    "shuffle_answers": false,
+    "time_limit": 120,
+    "multiple_attempts": false,
+    "show_correct_answers": true,
+    "access_code": "exam123",
+    "one_question_at_a_time": true,
+    "lock_questions_after_answering": true,
+    "due_date": "2025-12-20T17:30:00",
+    "available_date": "2025-12-15T00:00:00",
+    "until_date": "2025-12-20T17:30:00",
+    "questions": [],
+    "published": true,
+    "instructions": ""
+  }
+]

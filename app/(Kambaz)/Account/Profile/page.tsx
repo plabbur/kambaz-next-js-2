@@ -44,6 +44,9 @@ export default function Profile() {
       <h3>Profile</h3>
       {profile && (
         <div>
+          <label htmlFor="wd-username" className="form-label">
+            Username
+          </label>
           <FormControl
             id="wd-username"
             className="mb-2"
@@ -52,6 +55,9 @@ export default function Profile() {
               setProfile({ ...profile, username: e.target.value })
             }
           />
+          <label htmlFor="wd-password" className="form-label">
+            Password
+          </label>
           <FormControl
             id="wd-password"
             className="mb-2"
@@ -60,6 +66,9 @@ export default function Profile() {
               setProfile({ ...profile, password: e.target.value })
             }
           />
+          <label htmlFor="wd-firstname" className="form-label">
+            First Name
+          </label>
           <FormControl
             id="wd-firstname"
             className="mb-2"
@@ -69,6 +78,9 @@ export default function Profile() {
               console.log("first name changed to", e.target.value);
             }}
           />
+          <label htmlFor="wd-lastname" className="form-label">
+            Last Name
+          </label>
           <FormControl
             id="wd-lastname"
             className="mb-2"
@@ -77,6 +89,9 @@ export default function Profile() {
               setProfile({ ...profile, lastName: e.target.value })
             }
           />
+          <label htmlFor="wd-dob" className="form-label">
+            Date of Birth
+          </label>
           <FormControl
             id="wd-dob"
             className="mb-2"
@@ -84,31 +99,45 @@ export default function Profile() {
             defaultValue={profile.dob}
             onChange={(e) => setProfile({ ...profile, dob: e.target.value })}
           />
+          <label htmlFor="wd-email" className="form-label">
+            Email
+          </label>
           <FormControl
             id="wd-email"
             className="mb-2"
             defaultValue={profile.email}
             onChange={(e) => setProfile({ ...profile, email: e.target.value })}
           />
+          <label htmlFor="wd-role" className="form-label">
+            Role
+          </label>
           <select
             className="form-control mb-2"
             id="wd-role"
+            value={profile.role}
             onChange={(e) => setProfile({ ...profile, role: e.target.value })}
           >
-            <option value="USER">User</option>
+            <option value="USER">Select User Type</option>
             <option value="ADMIN">Admin</option>
             <option value="FACULTY">Faculty</option>{" "}
             <option value="STUDENT">Student</option>
+            <option value="TA">TA</option>
           </select>
-          <button
+          <Button
+            variant="secondary"
             onClick={updateProfile}
             className="btn btn-primary w-100 mb-2"
           >
             {" "}
             Update{" "}
-          </button>
+          </Button>
 
-          <Button onClick={signout} className="w-100 mb-2" id="wd-signout-btn">
+          <Button
+            variant="danger"
+            onClick={signout}
+            className="w-100 mb-2"
+            id="wd-signout-btn"
+          >
             Sign out
           </Button>
         </div>

@@ -18,7 +18,9 @@ export default function KambazLayout({
             <div>
               <KambazNavigation />
             </div>
-            <div className="wd-main-content-offset p-3">{children}</div>
+            <div className="wd-main-content-offset p-3 flex-fill">
+              {children}
+            </div>
           </div>
         </div>
       </Session>
