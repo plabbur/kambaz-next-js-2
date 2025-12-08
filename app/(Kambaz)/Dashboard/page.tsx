@@ -149,9 +149,9 @@ export default function Dashboard() {
 
   const filteredCourses = courses.filter((c: CourseType) => {
     if (showAllCourses) return true;
-    return enrollments.some(
-      (en: any) => en.user === currentUser._id && en.course === c._id
-    );
+    if (!currentUser) return false;
+    // enrollments now contains Course objects
+    return enrollments.some((course: any) => course._id === c._id);
   });
 
   const fetchCourses = async () => {
@@ -213,24 +213,32 @@ export default function Dashboard() {
     if (!currentUser) {
       return false;
     }
-    return enrollments.some(
-      (enrollment: any) =>
-        enrollment.user === currentUser._id && enrollment.course === courseId
+    // enrollments now contains Course objects, so check course._id
+    const enrolled = enrollments.some(
+      (course: any) => course._id === courseId
     );
+    console.log("isEnrolled check:", { courseId, enrolled, totalEnrollments: enrollments.length });
+    return enrolled;
   };
 
-  const handleEnrollment = (courseId: string, isCurrentlyEnrolled: boolean) => {
+  const handleEnrollment = async (courseId: string, isCurrentlyEnrolled: boolean) => {
     if (!currentUser) return;
-    if (isCurrentlyEnrolled) {
-      enrollClient
-        .unenroll(currentUser._id, courseId)
-        .then(() => dispatch(unenroll({ userId: currentUser._id, courseId })))
-        .catch((e) => console.error("unenroll failed", e));
-    } else {
-      enrollClient
-        .enroll(currentUser._id, courseId)
-        .then(() => dispatch(enroll({ userId: currentUser._id, courseId })))
-        .catch((e) => console.error("enroll failed", e));
+    console.log("handleEnrollment called:", { courseId, isCurrentlyEnrolled, userId: currentUser._id });
+    try {
+      if (isCurrentlyEnrolled) {
+        await enrollClient.unenroll(currentUser._id, courseId);
+        console.log("Unenroll successful");
+      } else {
+        await enrollClient.enroll(currentUser._id, courseId);
+        console.log("Enroll successful");
+      }
+      // Reload enrollments after change
+      console.log("Reloading enrollments from server...");
+      const items = await enrollClient.findEnrollmentsForUser(currentUser._id);
+      console.log("Fresh enrollments loaded:", items);
+      dispatch(setEnrollments(items));
+    } catch (e) {
+      console.error("enroll/unenroll failed", e);
     }
   };
 
