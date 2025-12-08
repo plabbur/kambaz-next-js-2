@@ -167,7 +167,6 @@ export default function Quizzes() {
 
   const isFaculty =
     currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
-
   useEffect(() => {
     if (cid) {
       client.findQuizzesForCourse(cid as string).then((data) => {
