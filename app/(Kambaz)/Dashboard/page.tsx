@@ -176,6 +176,12 @@ export default function Dashboard() {
         courses.filter((course: CourseType) => course._id !== courseId)
       )
     );
+    // Also remove from enrollments
+    dispatch(
+      setEnrollments(
+        enrollments.filter((course: CourseType) => course._id !== courseId)
+      )
+    );
   };
 
   const onUpdateCourse = async () => {
@@ -183,6 +189,14 @@ export default function Dashboard() {
     dispatch(
       setCourses(
         courses.map((c: CourseType) =>
+          c._id === updated._id ? updated : c
+        )
+      )
+    );
+    // Also update in enrollments
+    dispatch(
+      setEnrollments(
+        enrollments.map((c: CourseType) =>
           c._id === updated._id ? updated : c
         )
       )
