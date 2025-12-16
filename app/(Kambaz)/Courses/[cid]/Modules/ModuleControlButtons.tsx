@@ -7,10 +7,12 @@ export default function ModuleControlButtons({
   moduleId,
   deleteModule,
   editModule,
+  updateModule,
 }: {
   moduleId: string;
   deleteModule: (moduleId: string) => void;
   editModule: (moduleId: string) => void;
+  updateModule: (module: any) => void;
 }) {
   return (
     <div className="float-end">
@@ -28,7 +30,12 @@ export default function ModuleControlButtons({
         <FaTrash />
       </button>
 
-      <GreenCheckmark />
+      <button
+        onClick={() => updateModule(moduleId)}
+        className="btn btn-link border-0 p-1"
+      >
+        <GreenCheckmark />
+      </button>
       <BsPlus className="fs-1" />
       <IoEllipsisVertical className="fs-4" />
     </div>
