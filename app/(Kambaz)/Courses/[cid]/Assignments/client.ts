@@ -1,7 +1,7 @@
 import axios from "axios";
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
-const BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000";
+const BASE = process.env.NEXT_PUBLIC_HTTP_SERVER || "http://localhost:4000";
 
 export const findAssignmentsForCourse = async (courseId: string) => {
   const res = await axiosWithCredentials.get(
